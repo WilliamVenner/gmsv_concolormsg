@@ -14,6 +14,7 @@ fn open() {
 	#[cfg(target_os = "windows")]
 	if let Err(err) = ansi_term::enable_ansi_support() {
 		eprintln!("gmsv_concolormsg | FAILED TO ENABLE ANSI COLOR SUPPORT (Error {})", err);
+		return;
 	}
 
 	unsafe { detour::detour() };
