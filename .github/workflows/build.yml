@@ -24,8 +24,6 @@ jobs:
       run: cargo build --release --target x86_64-pc-windows-msvc
     - name: Rename files
       run: ren target/x86_64-pc-windows-msvc/release/gmsv_concolormsg.dll gmsv_concolormsg_win64.dll
-    - name: Create VDF
-      run: echo Plugin { file "lua/bin/gmsv_concolormsg_win64.dll" } > gmsv_concolormsg.vdf
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
