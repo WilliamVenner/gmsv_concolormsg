@@ -1,0 +1,20 @@
+[package]
+name = "gmsv_concolormsg"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gmod = { version = "9.1.0", features = ["hax"] }
+ansi_term = "0.12.1"
+cxx = "1.0.54"
+
+[build-dependencies]
+cxx-build = "1.0.54"
+
+[profile.release]
+codegen-units = 1
+lto = 'thin'
