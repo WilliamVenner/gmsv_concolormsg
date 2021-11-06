@@ -5,7 +5,7 @@ use super::{open, close};
 #[cxx::bridge]
 mod plugin {
 	extern "C++" {
-		include!("plugin.h");
+		include!("plugin.hpp");
 		unsafe fn CreateInterface() -> usize;
 	}
 
