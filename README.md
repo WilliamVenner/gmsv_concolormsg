@@ -1,4 +1,4 @@
-# gmsv_concolormsg
+# 🌈 gmsv_concolormsg
 
 This module for Garry's Mod fixes x86-64 Windows 64-bit SRCDS not displaying colours.
 
