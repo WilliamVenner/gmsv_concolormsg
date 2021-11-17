@@ -35,9 +35,9 @@ extern "C" {
 macro_rules! va_fmt_to_string {
 	($str:ident, $fmt:ident, $args:ident) => {
 		let mut buf = [0i8; MAXPRINTMSG];
-		let len = vsnprintf(buf.as_mut_ptr(), MAXPRINTMSG, $fmt, &mut $args.as_va_list() as *mut _);
+		let len = (vsnprintf(buf.as_mut_ptr(), MAXPRINTMSG, $fmt, &mut $args.as_va_list() as *mut _) as usize).min(MAXPRINTMSG);
 		let buf: [u8; MAXPRINTMSG] = std::mem::transmute(buf);
-		let $str = String::from_utf8_lossy(&buf[0..len as usize]);
+		let $str = String::from_utf8_lossy(&buf[0..len]);
 	};
 }
 
