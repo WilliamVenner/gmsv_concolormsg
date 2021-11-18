@@ -22,33 +22,36 @@ impl Color {
 	}
 }
 
-const MAXPRINTMSG: usize = 4096;
+const MAXPRINTMSG: usize = 5020;
 
 extern "C" {
 	pub fn vsnprintf(
 		__s: *mut ::std::os::raw::c_char,
 		__maxlen: usize,
 		__format: *const ::std::os::raw::c_char,
-		__arg: *mut std::ffi::VaList,
+		__arg: std::ffi::VaList,
 	) -> ::std::os::raw::c_int;
 }
 macro_rules! va_fmt_to_string {
 	($str:ident, $fmt:ident, $args:ident) => {
 		let mut buf = [0i8; MAXPRINTMSG];
-		let len = (vsnprintf(buf.as_mut_ptr(), MAXPRINTMSG, $fmt, &mut $args.as_va_list() as *mut _) as usize).min(MAXPRINTMSG);
+		let len = vsnprintf(buf.as_mut_ptr(), MAXPRINTMSG - 1, $fmt, $args.as_va_list());
+		if len == -1 { return; }
+		let len = (len as usize).min(MAXPRINTMSG);
 		let buf: [u8; MAXPRINTMSG] = std::mem::transmute(buf);
 		let $str = String::from_utf8_lossy(&buf[0..len]);
 	};
 }
 
-pub unsafe extern "C" fn con_color_msg(color: *const Color, fmt: *const c_char, mut args: std::ffi::VaListImpl<'static>) {
+pub unsafe extern "C" fn con_color_msg(color: *const Color, fmt: *const c_char, mut args: ...) {
 	use std::io::Write;
 
 	va_fmt_to_string!(str, fmt, args);
 
 	let color = &*color;
 	let ansi_color = ansi_term::Color::RGB(color.r(), color.g(), color.b());
-	print!("{}", ansi_color.paint(str.as_ref()));
 
-	std::io::stdout().flush().ok(); // If we don't flush, the terminal sometimes doesn't reset the style.
+	let mut stdout = std::io::stdout();
+	stdout.write_all(ansi_color.paint(str.as_ref()).to_string().as_bytes()).ok();
+	stdout.flush().ok(); // If we don't flush, the terminal sometimes doesn't reset the style.
 }
